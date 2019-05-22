@@ -169,6 +169,9 @@ def get_anime_info(anime_id):
 	anime = AnimeVideo.query.filter_by(anime_id = anime_id).first()
 	keys = ["anime_russian", "anime_english"]
 
+	if not anime:
+		abort(status.HTTP_404_NOT_FOUND)
+
 	for key in keys:
 		res[key] = getattr(anime, key)
 
