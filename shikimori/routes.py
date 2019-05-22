@@ -265,7 +265,11 @@ def faye_stub():
 @app.route("/animes/<anime_id>/video_online/<episode>.html", defaults={'video_id': None}, methods=["GET"])
 @app.route("/animes/<anime_id>/video_online/<episode>/<video_id>.html", methods=["GET"])
 @app.basic_auth.required
-def play_episode(anime_id, episode, video_id):
+def play_episode(anime_id, episode, video_id, static = ""):
+	return render_episode(anime_id, episode, video_id, static)
+
+
+def render_episode(anime_id, episode, video_id = None, static = "", out_file = ""):
 	#session.clear()
 	#return render_template("home.html")
 	if not anime_id:
@@ -278,4 +282,8 @@ def play_episode(anime_id, episode, video_id):
 	anime_videos = get_videos_for_episode(anime_id, episode, video_id)
 	anime_info = get_anime_info(anime_id)
 
-	return render_template("video_template.html", anime_id = anime_id, anime_videos = anime_videos, anime_info = anime_info)
+	if out_file:
+		ret = render_template("video_template.html", anime_id = anime_id, anime_videos = anime_videos, anime_info = anime_info, static = ".")
+		open(out_file, "w").write(ret)
+		return
+	return render_template("video_template.html", anime_id = anime_id, anime_videos = anime_videos, anime_info = anime_info, static = static)
