@@ -215,6 +215,8 @@ def get_videos_for_episode(anime_id, episode, video_id = None):
 	keys = ["url", "video_hosting", "author", "uploader", "language", "id", "anime_id", "active", "episode"]
 	active_video = None
 
+	video_ids = []
+
 	for n, v in enumerate(anime_videos):
 		v.video_hosting = urllib.parse.urlparse(v.url).netloc
 		if (video_id is None) and n == 0:
@@ -231,8 +233,11 @@ def get_videos_for_episode(anime_id, episode, video_id = None):
 			v.language = "unknown"
 
 		video_dict = {key: getattr(v, key) for key in keys}
+		video_ids.append(v.id)
 			
 		res[video_kinds[v.kind]].append(video_dict)
+
+	res["ids"] = video_ids
 	
 	#print(res, active_video)
 	if active_video is not None:
