@@ -261,8 +261,11 @@ def faye_stub():
 def play_episode(anime_id, episode, video_id):
 	#session.clear()
 	#return render_template("home.html")
+	if not anime_id:
+		abort(status.HTTP_404_NOT_FOUND)
 	try:
-		int(anime_id)
+		id = anime_id.split("-")[0]
+		int(id)
 	except:
 		abort(status.HTTP_404_NOT_FOUND)
 	anime_videos = get_videos_for_episode(anime_id, episode, video_id)
