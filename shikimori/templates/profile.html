@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div class="jumbo">
+    <h2>{{ _("profile_str") }}<h2>
+    <h3>{{ _("greetings_str") }}, {{ session['login'] }}!<h3>
+
+  </div>
+{% endblock %}

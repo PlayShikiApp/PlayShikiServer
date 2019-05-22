@@ -1,0 +1,264 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
+import os
+import io
+import random
+import time
+
+from collections import OrderedDict
+from shikimori import app
+from flask import Flask, render_template, render_template_string, request, jsonify, session, send_file, flash, url_for, redirect, abort
+from flask_api import status
+from flask_babel import gettext, ngettext, lazy_gettext
+from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
+from flask_mail import Message, Mail
+from sqlalchemy import Column, Integer, Numeric, String, DateTime, ForeignKey, Table
+from sqlalchemy import func
+
+import urllib
+
+import openpyxl
+from openpyxl.workbook import Workbook
+from openpyxl.writer.excel import save_virtual_workbook
+
+import demjson
+import pandas as pd
+import numpy as np
+
+from .models import User, Anime, AnimeVideo, AnimeVideoAuthor
+from .forms import contact_form, upload_form, signup_form, signin_form
+from werkzeug.utils import secure_filename
+
+mail = Mail()
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = ""
+
+@login_manager.user_loader
+def load_user(user_id):
+	return FlaskUser(user_id)
+
+class FlaskUser(UserMixin):
+	def __init__(self,id):
+		self.id = id
+
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+	return redirect("/")
+
+@app.route("/")
+def home():
+	#session.clear()
+	#return render_template("home.html")
+	return redirect(url_for("play_episode", anime_id = 18689, episode = 1))
+
+def allowed_file(filename):
+	return os.path.splitext(filename)[1] in app.config["ALLOWED_EXTENSIONS"]
+
+def ensure_folder_exists(folder):
+	if not os.path.isdir(folder):
+		os.makedirs(folder)
+
+@app.route("/upload_file", methods=["GET", "POST"])
+@login_required
+def upload_file():
+	form = upload_form.UploadForm()
+
+	if request.method == "POST":
+		if not form.validate_on_submit():
+			return render_template("upload.html", form = form, success = False)
+
+		# check if the post request has the file part
+		if "file" not in request.files:
+			return render_template("upload.html", form = form, no_selected_file = True)
+
+		file = request.files["file"]
+		# if user does not select file, browser also
+		# submit an empty part without filename
+		if file.filename == "":
+			return render_template("upload.html", form = form, no_selected_file = True)
+		if file and allowed_file(file.filename):
+			filename = secure_filename(file.filename)
+			user_folder = os.path.join(app.config["UPLOAD_FOLDER"], session["login"])
+			ensure_folder_exists(user_folder)
+
+			file.save(os.path.join(user_folder, filename))
+			return render_template("upload.html", form = form, success = True)
+		else:
+			return render_template("upload.html", form = form, not_allowed_ext = True)
+
+	return render_template("upload.html", form = form, success = False)
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+	form = signup_form.SignupForm()
+
+	if current_user.is_authenticated:
+		return redirect(url_for("profile"))
+
+	if request.method == "POST":
+		if form.validate() == False:
+			return render_template("signup.html", form = form)
+		else:
+			role = form.role.data
+
+			new_user = User(form.login.data, form.password.data, role)
+			app.db.session.commit()
+			session["login"] = new_user.login
+			login_user(FlaskUser(new_user.id))
+
+			return redirect(url_for("profile"))
+	elif request.method == "GET":
+		return render_template("signup.html", form = form)
+
+@app.route("/profile")
+@login_required
+def profile():
+	user = User.query.filter_by(login = session["login"]).first()
+
+	if user is None:
+		return redirect(url_for("signin"))
+
+	return render_template("profile.html")
+
+@app.route("/about", methods=["GET", "POST"])
+def about():
+	return redirect("/")
+
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+	return redirect("/")
+
+@app.route("/signin", methods=["GET", "POST"])
+def signin():
+	if current_user.is_authenticated:
+		redirect(url_for("profile"))
+
+	form = signin_form.SigninForm()
+
+	if request.method == "POST":
+		if not form.validate():
+			return render_template("signin.html", form = form)
+
+		session["login"] = form.login.data
+		user = User.query.filter_by(login = session["login"]).first()
+		login_user(FlaskUser(user.id))
+		if not user.student_id:
+			return redirect(url_for("profile"))
+		else:
+			return redirect(url_for("student_form", id = [user.student_id]))
+
+	elif request.method == "GET":
+		return render_template("signin.html", form = form)
+
+
+
+@app.route("/signout")
+@login_required
+def signout():
+	logout_user()
+	del session["login"]
+	return redirect(url_for("home"))
+
+def get_anime_info(anime_id):
+	res = OrderedDict()
+	res["duration"] = app.db.session.query(func.max(AnimeVideo.episode)).filter_by(anime_id = anime_id).scalar()
+	anime = AnimeVideo.query.filter_by(anime_id = anime_id).first()
+	keys = ["anime_russian", "anime_english"]
+
+	for key in keys:
+		res[key] = getattr(anime, key)
+
+	return res
+
+def get_episodes_info(anime_id):
+	res = OrderedDict()
+
+video_kinds = {"озвучка": "fandub", "оригинал": "raw", "субтитры": "subtitles"}
+	
+@app.route("/api_videos/<anime_id>", methods=["GET"])
+def anime_info(anime_id):
+	return demjson.encode(get_anime_info(anime_id))
+
+def serialize(obj):
+	keys = obj.__table__.columns.keys()
+	
+	return OrderedDict([(attr, getattr(obj, attr)) for attr in keys])
+
+def get_videos_for_episode(anime_id, episode, video_id = None):
+	anime_videos = AnimeVideo.query.filter_by(anime_id = anime_id, episode = episode).order_by(AnimeVideo.kind).all()
+	res = OrderedDict()
+	for k in video_kinds.values():
+		res[k] = []
+
+	if len(anime_videos) < 1:
+		res["active_kind"] = "fansub"
+		res["active_video"] = {"episode": 0}
+		return res
+
+	#print(video_id)
+	try:
+		video_id = int(video_id)
+	except:
+		video_id = None
+
+	if not video_id in [a.id for a in anime_videos]:
+		video_id = anime_videos[0].id
+
+	keys = ["url", "video_hosting", "author", "uploader", "language", "id", "anime_id", "active", "episode"]
+	active_video = None
+
+	for n, v in enumerate(anime_videos):
+		v.video_hosting = urllib.parse.urlparse(v.url).netloc
+		if (video_id is None) and n == 0:
+			v.active = " active"
+		else:
+			v.active = " active" if (video_id == v.id) else ""
+
+		#print("(%s == %s) is %d" % (video_id, v.id, video_id == v.id))
+
+		if v.active:
+			active_video = v
+
+		if not v.language:
+			v.language = "unknown"
+
+		video_dict = {key: getattr(v, key) for key in keys}
+			
+		res[video_kinds[v.kind]].append(video_dict)
+	
+	#print(res, active_video)
+	if active_video is not None:
+		res["active_kind"] = video_kinds[active_video.kind]
+		res["active_video"] = serialize(active_video)
+	else:
+		res["active_kind"] = "fansub"
+		res["active_video"] = {"episode": 0}
+
+	return res
+
+@app.route("/api_videos/<anime_id>/<episode>", defaults={'video_id': None}, methods=["GET"])
+@app.route("/api_videos/<anime_id>/<episode>/<video_id>", methods=["GET"])
+def api_videos(anime_id, episode, video_id):
+	return demjson.encode(get_videos_for_episode(anime_id, episode, video_id))
+
+@app.route("/faye", methods=["GET", "POST"])
+def faye_stub():
+	return "ok"
+
+
+@app.route("/animes/<anime_id>/video_online/<episode>", defaults={'video_id': None}, methods=["GET"])
+@app.route("/animes/<anime_id>/video_online/<episode>/<video_id>", methods=["GET"])
+def play_episode(anime_id, episode, video_id):
+	#session.clear()
+	#return render_template("home.html")
+	try:
+		int(anime_id)
+	except:
+		abort(status.HTTP_404_NOT_FOUND)
+	anime_videos = get_videos_for_episode(anime_id, episode, video_id)
+	anime_info = get_anime_info(anime_id)
+
+	return render_template("video_template.html", anime_id = anime_id, anime_videos = anime_videos, anime_info = anime_info)

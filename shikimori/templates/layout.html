@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ _("site_name_str") }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main1.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/css/bootstrap-slider.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
+
+<style>
+.tooltip-min,
+.tooltip-max {
+  display: none
+}
+</style>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    {{ JSGlue.include() }}
+
+    {% block head %}
+    {% endblock %}
+  </head>
+  <body>
+<!--
+  <div>
+  hide_header  = {{ hide_header }}
+
+  </div>
+-->
+  {% if hide_header %}
+  <header style="display: none;">
+  {% else %}
+  <header>
+  {% endif %}
+    <div class="container">
+      <h1 class="logo">{{ _("Logo") }}</h1>
+      <nav>
+        <ul class="menu">
+          <li><a href="{{ url_for('home') }}">{{ _("Home") }}</a></li>
+          <li><a href="{{ url_for('about') }}">{{ _("About") }}</a></li>
+          <li><a href="{{ url_for('contact') }}">{{ _("Contact") }}</a></li>
+          {% if current_user.is_authenticated %}
+          <li><a href="{{ url_for('profile') }}">{{ _("Profile") }}</a></li>
+         <!-- <li><a href="{{ url_for('dash') }}">{{ _("Dash") }}</a></li> -->
+         <!-- <li><a href="{{ url_for('upload_file') }}">{{ _("Upload") }}</a></li> -->
+          <li><a href="{{ url_for('signout') }}">{{ _("Sign Out") }}</a></li>
+          {% else %}
+          <li><a href="{{ url_for('signup') }}">{{ _("Sign Up") }}</a></li>
+          <li><a href="{{ url_for('signin') }}">{{ _("Sign In") }}</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+    <div class="container">
+      {% block content %}
+      {% endblock %}
+    </div>
+	
+	{% block footer %}
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/bootstrap-slider.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/locales/bootstrap-datepicker.ru.min.js"></script>
+	{% endblock %}
+
+  </body>
+</html>

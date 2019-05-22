@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <h2>{{ _("Upload") }}</h2>
+
+  {% if success %}
+    <p>{{ _("File was uploaded successfully!") }}</p>
+  {% elif not_allowed_ext %}
+    <p>{{ _("This file extension is not allowed.") }}</p>
+  {% elif no_selected_file %}
+    <p>{{ _("No file was selected.") }}</p>
+  {% endif %}
+
+  <form method=post enctype=multipart/form-data>
+    {{ form.hidden_tag() }}
+    {{ form.file }}
+    {{ form.submit }}
+  </form>
+{% endblock %}
