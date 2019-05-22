@@ -13,6 +13,7 @@ mysqlclient==1.4.2.post1
 Flask==1.0.2
 Flask-API==1.1
 Flask-Babel==0.12.2
+Flask-BasicAuth==0.2.0
 Flask-Bootstrap==3.3.7.1
 Flask-Compress==1.4.0
 Flask-Failsafe==0.2

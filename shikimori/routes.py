@@ -49,6 +49,7 @@ def unauthorized_callback():
 	return redirect("/")
 
 @app.route("/")
+@app.basic_auth.required
 def home():
 	#session.clear()
 	#return render_template("home.html")
@@ -179,6 +180,7 @@ def get_episodes_info(anime_id):
 video_kinds = {"озвучка": "fandub", "оригинал": "raw", "субтитры": "subtitles"}
 	
 @app.route("/api_videos/<anime_id>", methods=["GET"])
+@app.basic_auth.required
 def anime_info(anime_id):
 	return demjson.encode(get_anime_info(anime_id))
 
@@ -241,6 +243,7 @@ def get_videos_for_episode(anime_id, episode, video_id = None):
 
 @app.route("/api_videos/<anime_id>/<episode>", defaults={'video_id': None}, methods=["GET"])
 @app.route("/api_videos/<anime_id>/<episode>/<video_id>", methods=["GET"])
+@app.basic_auth.required
 def api_videos(anime_id, episode, video_id):
 	return demjson.encode(get_videos_for_episode(anime_id, episode, video_id))
 
@@ -251,6 +254,7 @@ def faye_stub():
 
 @app.route("/animes/<anime_id>/video_online/<episode>", defaults={'video_id': None}, methods=["GET"])
 @app.route("/animes/<anime_id>/video_online/<episode>/<video_id>", methods=["GET"])
+@app.basic_auth.required
 def play_episode(anime_id, episode, video_id):
 	#session.clear()
 	#return render_template("home.html")

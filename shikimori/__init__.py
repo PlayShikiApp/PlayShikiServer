@@ -5,6 +5,8 @@ from flask_babel import Babel
 from flask_session import Session
 from flask_jsglue import JSGlue
 
+from flask_basicauth import BasicAuth
+
 from datetime import timedelta
 
 root_dir = realpath(join(dirname(__file__), ".."))
@@ -12,6 +14,7 @@ dot_env = realpath(join(root_dir, "../.env"))
 
 flask_templates_dir = realpath(join(dirname(__file__), "templates"))
 app = Flask(__name__, template_folder = flask_templates_dir)
+app.basic_auth = BasicAuth(app)
 app.config["TEMPLATES_DIR"] = flask_templates_dir
 
 app.config["DATAFRAMES_DIR"] = realpath(join(dirname(__file__), "dataframes"))
@@ -41,6 +44,9 @@ app.config["SQLALCHEMY_DATABASE_URI"] = open(dot_env, "r").read().split("\n")[0]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["ALLOWED_EXTENSIONS"] = ALLOWED_EXTENSIONS
+
+app.config['BASIC_AUTH_USERNAME'] = 'admin'
+app.config['BASIC_AUTH_PASSWORD'] = 'admin'
 
 from .routes import mail
 mail.init_app(app)
