@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class=" history webworkers supports fontface cssanimations csstransforms csstransforms3d csstransitions bloburls cssmask" style="" data-url="https://shikimori.one/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['episode']}}">
+<html class=" history webworkers supports fontface cssanimations csstransforms csstransforms3d csstransitions bloburls cssmask" style="" data-url="/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['episode']}}.html">
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
       <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
@@ -27,12 +27,12 @@
       <link href="https://shikimori.one/favicons/opera-icon-228x228.png" rel="icon" sizes="228x228">
       <link href="https://shikimori.one/search.xml" rel="search" title="shikimori.one" type="application/opensearchdescription+xml">
       <link href="https://shikimori.one/yandex-tableau-widget-manifest.json" rel="yandex-tableau-widget">
-      <link href="https://shikimori.one/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['episode']}}" rel="canonical">
+      <link href="/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['episode']}}.html" rel="canonical">
       <meta content="video.tv_show" property="og:type">
       <meta content="Эпизод {{anime_videos['active_video']['episode']}}" property="og:title">
       <meta content="В этой истории рассказывается о парне по имени Эйджун Савамура, молодом и подающем надежды питчере. Он присоединяется к  команде элитной школы, где сияет бриллиантом талант Казуи Миюки — гениального кэтчера. Савамура жаждет стать выдающимся..." property="og:description">
       <meta content="https://dere.shikimori.one/system/animes/preview/{{anime_id}}.jpg" property="og:image">
-      <meta content="https://shikimori.one/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['episode']}}" property="og:url">
+      <meta content="/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['episode']}}.html" property="og:url">
       <meta content="Шикимори" property="og:site_name">
       <meta content="1440" property="video:duration">
       <meta content="2015-03-29" property="video:release_date">
@@ -41,7 +41,6 @@
       <meta content="Сёнен" property="video:tag">
       <meta content="Спорт" property="video:tag">
       <meta content="Эпизод {{anime_videos['active_video']['episode']}}" name="twitter:title">
-      <meta content="В этой истории рассказывается о парне по имени Эйджун Савамура, молодом и подающем надежды питчере. Он присоединяется к  команде элитной школы, где сияет бриллиантом талант Казуи Миюки — гениального кэтчера. Савамура жаждет стать выдающимся..." name="twitter:description">
       <meta content="https://dere.shikimori.one/system/animes/preview/{{anime_id}}.jpg" name="twitter:image">
       <meta content="Шикимори" name="twitter:site">
       <title>Эпизод {{anime_videos['active_video']['episode']}} / {{anime_videos['active_video']['anime_english']}} / Аниме</title>
@@ -111,7 +110,7 @@
                   <div class="l-content">
                      <div class="block">
                         <div class="player-container">
-                           <div class="b-video_player" data-episode="{{anime_videos['active_video']['episode']}}" data-kind="fandub" data-video_id="{{anime_videos['active_video']['id']}}" data-video_ids="[{{anime_videos['active_video']['id']}}]" data-watch-delay="480000" data-watch-url="https://shikimori.one/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['id']}}/track_view">
+                           <div class="b-video_player" data-episode="{{anime_videos['active_video']['episode']}}" data-kind="fandub" data-video_id="{{anime_videos['active_video']['id']}}" data-video_ids="[{{anime_videos['active_video']['id']}}]" data-watch-delay="480000" data-watch-url="/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['id']}}/track_view">
                               <div class="player-area"><iframe id="player" src="{{anime_videos['active_video']['url']}}" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" scrolling="no" allowfullscreen="allowfullscreen" style="height: 502px;"></iframe></div>
                               <div class="cc-anime_video_report-new">
                                  <div class="cc-2a">
@@ -154,7 +153,7 @@
                               <div class="cc-player_controls cc-2a">
                                  <div class="c-column">
                                     <div class="cc-navigation">
-                                       <a class="c-control prev" href="/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['episode'] - 1}}">
+                                       <a class="c-control prev" href="/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['episode'] - 1}}.html">
                                           <div class="icon"></div>
                                           <div class="label">Предыдущий</div>
                                        </a>
@@ -162,7 +161,7 @@
                                           <span>Эпизод</span><b> #</b><input data-href="/animes/{{anime_id}}/video_online/EPISODE_NUMBER" type="text" value="{{anime_videos['active_video']['episode']}}">
                                           <div class="video-link"><a href="{{anime_videos['active_video']['url']}}" target="_blank">прямая ссылка</a></div>
                                        </div>
-                                       <a class="c-control next" href="/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['episode'] + 1}}">
+                                       <a class="c-control next" href="/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['episode'] + 1}}.html">
                                           <div class="icon"></div>
                                           <div class="label">Следующий</div>
                                        </a>
@@ -185,7 +184,7 @@
                                  <div class="c-column">
                                     <div class="cc-options">
                                        <div class="c-buttons cc-3a">
-                                          <a class="c-column c-control increment-user_rate" data-method="post" data-next_url="/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['episode'] + 1}}" data-remote="true" href="https://shikimori.one/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['id']}}/viewed">
+                                          <a class="c-column c-control increment-user_rate" data-method="post" data-next_url="/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['episode'] + 1}}" data-remote="true" href="/animes/{{anime_id}}/video_online/{{anime_videos['active_video']['id']}}/viewed">
                                              <div class="icon"></div>
                                              <div class="label">Просмотрено</div>
                                           </a>
@@ -266,7 +265,7 @@
                            <div class="c-anime_video_episodes">
                               <div class="title">Эпизоды</div>
 			      {% for i in range(1, anime_info["duration"] + 1) %}
-                              <div class="b-video_variant" data-episode="{{i}}"><a href="/animes/{{anime_id}}/video_online/{{i}}"><span class="episode-num">#{{i}}</span><span class="episode-kinds">озвучка, субтитры, оригинал</span><span class="episode-hostings">vk, smotretanime, sibnet, ok</span></a></div>
+                              <div class="b-video_variant" data-episode="{{i}}"><a href="/animes/{{anime_id}}/video_online/{{i}}.html"><span class="episode-num">#{{i}}</span><span class="episode-kinds">озвучка, субтитры, оригинал</span><span class="episode-hostings">vk, smotretanime, sibnet, ok</span></a></div>
                               {% endfor %}
                               </div>
                            </div>

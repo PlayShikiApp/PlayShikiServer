@@ -262,6 +262,8 @@ def faye_stub():
 
 @app.route("/animes/<anime_id>/video_online/<episode>", defaults={'video_id': None}, methods=["GET"])
 @app.route("/animes/<anime_id>/video_online/<episode>/<video_id>", methods=["GET"])
+@app.route("/animes/<anime_id>/video_online/<episode>.html", defaults={'video_id': None}, methods=["GET"])
+@app.route("/animes/<anime_id>/video_online/<episode>/<video_id>.html", methods=["GET"])
 @app.basic_auth.required
 def play_episode(anime_id, episode, video_id):
 	#session.clear()
