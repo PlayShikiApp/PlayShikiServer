@@ -269,7 +269,7 @@ def play_episode(anime_id, episode, video_id, static = ""):
 	return render_episode(anime_id, episode, video_id, static)
 
 
-def render_episode(anime_id, episode, video_id = None, static = "", out_file = ""):
+def render_episode(anime_id, episode, video_id = None, static = "", out_file = "", template = ""):
 	#session.clear()
 	#return render_template("home.html")
 	if not anime_id:
@@ -282,8 +282,8 @@ def render_episode(anime_id, episode, video_id = None, static = "", out_file = "
 	anime_videos = get_videos_for_episode(anime_id, episode, video_id)
 	anime_info = get_anime_info(anime_id)
 
-	if out_file:
-		ret = render_template("video_template.html", anime_id = anime_id, anime_videos = anime_videos, anime_info = anime_info, static = ".")
+	if out_file and template:
+		ret = template.render(anime_id = anime_id, anime_videos = anime_videos, anime_info = anime_info, static = ".")
 		open(out_file, "w").write(ret)
 		return
 	return render_template("video_template.html", anime_id = anime_id, anime_videos = anime_videos, anime_info = anime_info, static = static)

@@ -227,7 +227,7 @@
                                  <div id="{{a['id']}}" class="b-video_variant{{a['active']}}" data-video_id="{{a['id']}}" onclick='update_src("{{a['url']}}", "{{a['id']}}")'>
 				<!--	<a class="working" data-remote="true" data-type="html" href="{{static}}/animes/{{a['anime_id']}}/video_online/{{a['episode']}}/{{a['id']}}">-->
 					<a href="javascript:void(0)">
-					<span class="video-kind {{a['language']}}">{{_(a['kind'])}}</span><span class="video-hosting">{{a['video_hosting']}}</span><span class="video-author">{{a['author']}}</span>
+					<span class="video-kind {{a['language']}}">{{a['kind']}}</span><span class="video-hosting">{{a['video_hosting']}}</span><span class="video-author">{{a['author']}}</span>
 					</a>
 				</div>
                                 {% endfor %}
@@ -240,7 +240,7 @@
 				 {% for a in anime_videos[kind] %}
                                  <div class="b-video_variant" data-video_id="{{a['id']}}" id="kind_{{a['id']}}" onclick='update_src("{{a['url']}}", "kind_{{a['id']}}")'>
 					<a href="javascript:void(0)">
-					<span class="video-kind {{a['language']}}">{{_(a['kind'])}}</span><span class="video-hosting">{{a['video_hosting']}}</span><span class="video-author">{{a['author']}}</span></div>
+					<span class="video-kind {{a['language']}}">{{a['kind']}}</span><span class="video-hosting">{{a['video_hosting']}}</span><span class="video-author">{{a['author']}}</span></div>
 					</a>
 				 {% endfor %}
 				 {% endfor %}
