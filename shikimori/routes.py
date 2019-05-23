@@ -18,13 +18,8 @@ from sqlalchemy import func
 
 import urllib
 
-import openpyxl
-from openpyxl.workbook import Workbook
-from openpyxl.writer.excel import save_virtual_workbook
-
 import demjson
 import pandas as pd
-import numpy as np
 
 from .models import User, Anime, AnimeVideo, AnimeVideoAuthor
 from .forms import contact_form, upload_form, signup_form, signin_form
@@ -283,7 +278,7 @@ def render_episode(anime_id, episode, video_id = None, static = "", out_file = "
 	anime_info = get_anime_info(anime_id)
 
 	if out_file and template:
-		ret = template.render(anime_id = anime_id, anime_videos = anime_videos, anime_info = anime_info, static = ".")
+		ret = template.render(anime_id = anime_id, anime_videos = anime_videos, anime_info = anime_info, static = static)
 		open(out_file, "w").write(ret)
 		return
 	return render_template("video_template.html", anime_id = anime_id, anime_videos = anime_videos, anime_info = anime_info, static = static)

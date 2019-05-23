@@ -4,7 +4,6 @@ from flask import Flask
 from flask_babel import Babel
 from flask_session import Session
 from flask_jsglue import JSGlue
-
 from flask_basicauth import BasicAuth
 
 from datetime import timedelta
