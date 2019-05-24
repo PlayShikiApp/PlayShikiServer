@@ -1,6 +1,5 @@
 Babel==2.6.0
 demjson==2.2.4
-mysqlclient==1.4.2.post1
 Flask==1.0.2
 Flask-API==1.1
 Flask-Babel==0.12.2

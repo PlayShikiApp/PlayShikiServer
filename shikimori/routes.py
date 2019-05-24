@@ -253,7 +253,6 @@ def get_videos_for_episode(anime_id, episode, video_id = None):
 
 @app.route("/api_videos/<anime_id>/<episode>", defaults={'video_id': None}, methods=["GET"])
 @app.route("/api_videos/<anime_id>/<episode>/<video_id>", methods=["GET"])
-@app.basic_auth.required
 def api_videos(anime_id, episode, video_id):
 	return demjson.encode(get_videos_for_episode(anime_id, episode, video_id))
 
@@ -263,7 +262,6 @@ def faye_stub():
 
 
 @app.route("/<anime_id>/<episode>", methods=["GET"])
-@app.basic_auth.required
 def play_episode(anime_id, episode):
 	html = render_episode(anime_id, episode, None, "")
 	return base64.b64encode(bxor(html.encode("u8"), video_key))
