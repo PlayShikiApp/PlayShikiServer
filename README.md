@@ -1,7 +1,7 @@
 # PlayShikiServer
 A server side app restoring old play.shikimori.org functionality
 
-### Installation
+# Installation
 
 PlayShikiServer requires [Python 3](https://www.python.org/downloads/release/python-373/)  to run.
 
