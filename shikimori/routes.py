@@ -6,6 +6,7 @@ import io
 import random
 import time
 
+import base64
 from collections import OrderedDict
 from shikimori import app
 from flask import Flask, render_template, render_template_string, request, jsonify, session, send_file, flash, url_for, redirect, abort
@@ -175,8 +176,13 @@ def get_anime_info(anime_id):
 def get_episodes_info(anime_id):
 	res = OrderedDict()
 
+
+from xor import bxor
+video_key = open("key_video.priv", "rb").read()
+key = open("key.priv", "rb").read()
+
 video_kinds = {"озвучка": "fandub", "оригинал": "raw", "субтитры": "subtitles"}
-	
+
 @app.route("/api_videos/<anime_id>", methods=["GET"])
 @app.basic_auth.required
 def anime_info(anime_id):
@@ -184,7 +190,7 @@ def anime_info(anime_id):
 
 def serialize(obj):
 	keys = obj.__table__.columns.keys()
-	
+
 	return OrderedDict([(attr, getattr(obj, attr)) for attr in keys])
 
 def get_videos_for_episode(anime_id, episode, video_id = None):
@@ -213,6 +219,7 @@ def get_videos_for_episode(anime_id, episode, video_id = None):
 	video_ids = []
 
 	for n, v in enumerate(anime_videos):
+		v.url = bxor(v.url, key).decode("u8")
 		v.video_hosting = urllib.parse.urlparse(v.url).netloc
 		if (video_id is None) and n == 0:
 			v.active = " active"
@@ -255,13 +262,11 @@ def faye_stub():
 	return "ok"
 
 
-@app.route("/animes/<anime_id>/video_online/<episode>", defaults={'video_id': None}, methods=["GET"])
-@app.route("/animes/<anime_id>/video_online/<episode>/<video_id>", methods=["GET"])
-@app.route("/animes/<anime_id>/video_online/<episode>.html", defaults={'video_id': None}, methods=["GET"])
-@app.route("/animes/<anime_id>/video_online/<episode>/<video_id>.html", methods=["GET"])
+@app.route("/<anime_id>/<episode>", methods=["GET"])
 @app.basic_auth.required
-def play_episode(anime_id, episode, video_id, static = ""):
-	return render_episode(anime_id, episode, video_id, static)
+def play_episode(anime_id, episode):
+	html = render_episode(anime_id, episode, None, "")
+	return base64.b64encode(bxor(html.encode("u8"), video_key))
 
 
 def render_episode(anime_id, episode, video_id = None, static = "", out_file = "", template = ""):
