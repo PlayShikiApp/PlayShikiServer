@@ -19,7 +19,9 @@ from sqlalchemy import func
 
 import urllib
 
+import json
 import demjson
+
 import pandas as pd
 
 from .models import User, Anime, AnimeVideo, AnimeVideoAuthor
@@ -178,8 +180,9 @@ def get_episodes_info(anime_id):
 
 
 from xor import bxor
-video_key = open("key_video.priv", "rb").read()
+#video_key = open("key_video.priv", "rb").read()
 key = open("key.priv", "rb").read()
+key2 = open("key2.priv", "rb").read()
 
 video_kinds = {"озвучка": "fandub", "оригинал": "raw", "субтитры": "subtitles"}
 
@@ -192,6 +195,9 @@ def serialize(obj):
 	keys = obj.__table__.columns.keys()
 
 	return OrderedDict([(attr, getattr(obj, attr)) for attr in keys])
+
+def encode(s):
+	return base64.b64encode(bxor(s.encode("u8"), key2))
 
 def get_videos_for_episode(anime_id, episode, video_id = None):
 	anime_videos = AnimeVideo.query.filter_by(anime_id = anime_id, episode = episode).order_by(AnimeVideo.kind).all()
@@ -251,10 +257,16 @@ def get_videos_for_episode(anime_id, episode, video_id = None):
 
 	return res
 
-@app.route("/api_videos/<anime_id>/<episode>", defaults={'video_id': None}, methods=["GET"])
-@app.route("/api_videos/<anime_id>/<episode>/<video_id>", methods=["GET"])
+@app.route("/api/<anime_id>/<episode>", defaults={'video_id': None}, methods=["GET"])
+@app.route("/api/<anime_id>/<episode>/<video_id>", methods=["GET"])
 def api_videos(anime_id, episode, video_id):
-	return demjson.encode(get_videos_for_episode(anime_id, episode, video_id))
+	#return demjson.encode(get_videos_for_episode(anime_id, episode, video_id))
+	return encode(json.dumps(get_videos_for_episode(anime_id, episode, video_id)))
+
+@app.route("/<anime_id>", methods=["GET"])
+def api_anime_info(anime_id):
+	return encode(json.dumps(get_anime_info(anime_id)))
+
 
 @app.route("/faye", methods=["GET", "POST"])
 def faye_stub():
@@ -265,7 +277,6 @@ def faye_stub():
 def play_episode(anime_id, episode):
 	html = render_episode(anime_id, episode, None, "")
 	return base64.b64encode(bxor(html.encode("u8"), video_key))
-
 
 def render_episode(anime_id, episode, video_id = None, static = "", out_file = "", template = ""):
 	#session.clear()
