@@ -12,6 +12,7 @@ cd PlayShikiServer
 pip3 install -r requerements.txt
 cd ..
 git clone https://github.com/PlayShikimoriApp/PlayShikiClient
+cd PlayShikiServer
 ```
 
 Restore database from backup:
