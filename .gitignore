@@ -1,4 +1,8 @@
 *.py[cod]
+*.sqlite
+*.sqlite-journal
+*.sql
+*.out
 
 # C extensions
 *.so
