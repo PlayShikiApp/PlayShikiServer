@@ -181,7 +181,6 @@ def get_episodes_info(anime_id):
 
 from xor import bxor
 #video_key = open("key_video.priv", "rb").read()
-key = open("key.priv", "rb").read()
 key2 = open("key2.priv", "rb").read()
 
 video_kinds = {"озвучка": "fandub", "оригинал": "raw", "субтитры": "subtitles"}
@@ -225,7 +224,7 @@ def get_videos_for_episode(anime_id, episode, video_id = None):
 	video_ids = []
 
 	for n, v in enumerate(anime_videos):
-		v.url = bxor(v.url, key).decode("u8")
+		v.url = base64.b64encode(v.url).decode("u8") #bxor(v.url, key).decode("u8")
 		v.video_hosting = urllib.parse.urlparse(v.url).netloc
 		if (video_id is None) and n == 0:
 			v.active = " active"
@@ -273,10 +272,10 @@ def faye_stub():
 	return "ok"
 
 
-@app.route("/<anime_id>/<episode>", methods=["GET"])
+"""@app.route("/<anime_id>/<episode>", methods=["GET"])
 def play_episode(anime_id, episode):
 	html = render_episode(anime_id, episode, None, "")
-	return base64.b64encode(bxor(html.encode("u8"), video_key))
+	return base64.b64encode(bxor(html.encode("u8"), video_key))"""
 
 def render_episode(anime_id, episode, video_id = None, static = "", out_file = "", template = ""):
 	#session.clear()
