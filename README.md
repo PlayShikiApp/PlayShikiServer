@@ -9,7 +9,7 @@ Install the dependencies:
 
 ```sh
 cd PlayShikiServer
-pip3 install -r requerements.txt
+pip3 install -r requirements.txt
 cd ..
 git clone https://github.com/PlayShikimoriApp/PlayShikiClient
 cd PlayShikiServer
