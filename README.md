@@ -49,10 +49,12 @@ Generate *.js keys:
 ./utils/genkeys.py key2.priv keys/key2.js
 ```
 
-Configure host address and port in .env file
+Configure host address and port in config.js file
 ```
-HOST=127.0.0.1
-PORT=8100
+module.exports = {
+   "HOST": "127.0.0.1",
+   "PORT": "8100"
+}
 ```
 
 # Start server
