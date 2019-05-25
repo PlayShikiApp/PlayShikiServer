@@ -180,7 +180,6 @@ def get_episodes_info(anime_id):
 
 
 from xor import bxor
-#video_key = open("key_video.priv", "rb").read()
 key2 = open("key2.priv", "rb").read()
 
 video_kinds = {"озвучка": "fandub", "оригинал": "raw", "субтитры": "subtitles"}
