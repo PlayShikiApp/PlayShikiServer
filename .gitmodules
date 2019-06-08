@@ -1,0 +1,3 @@
+[submodule "parsers"]
+	path = parsers
+	url = https://github.com/PlayShikimoriApp/parsers
