@@ -5,8 +5,9 @@ import os
 import io
 import random
 import time
-
 import base64
+
+from functools import lru_cache
 from collections import OrderedDict
 from shikimori import app
 from flask import Flask, render_template, render_template_string, request, jsonify, session, send_file, flash, url_for, redirect, abort
@@ -161,6 +162,7 @@ def signout():
 	del session["login"]
 	return redirect(url_for("home"))
 
+@lru_cache(maxsize = None)
 def get_anime_info(anime_id):
 	res = OrderedDict()
 	res["duration"] = app.db.session.query(func.max(AnimeVideo.episode)).filter_by(anime_id = anime_id).scalar()
@@ -198,6 +200,7 @@ def serialize(obj):
 def encode(s):
 	return base64.b64encode(bxor(s.encode("u8"), key2))
 
+@lru_cache(maxsize = None)
 def get_max_episode_for_hosting(anime_id, video_hosting):
 	video_hosting = "%" + video_hosting + "%"
 	max_episode = app.db.session.query(func.max(AnimeVideo.episode)).filter(AnimeVideo.url.ilike(video_hosting)).filter_by(anime_id = anime_id).scalar()
