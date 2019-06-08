@@ -27,11 +27,9 @@ Generate keys (used for server responses encoding):
 ./utils/genkeys.py $(( 64 * 1024 )) key2.priv
 ```
 
-Encode database URLs:
+Set up database URI:
 ```
-./encode_db_urls.py key.priv
-cp key.priv ../PlayShikiClient
-cp key2.priv ../PlayShikiClient
+echo "sqlite:///../db-test.sqlite" > .env
 ```
 
 # Configure client-side application:

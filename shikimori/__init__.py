@@ -9,7 +9,7 @@ from flask_basicauth import BasicAuth
 from datetime import timedelta
 
 root_dir = realpath(join(dirname(__file__), ".."))
-dot_env = realpath(join(root_dir, "../.env"))
+dot_env = realpath(join(root_dir, ".env"))
 
 flask_templates_dir = realpath(join(dirname(__file__), "templates"))
 app = Flask(__name__, template_folder = flask_templates_dir)
@@ -39,8 +39,8 @@ app.config["MAIL_PORT"] = 465
 app.config["MAIL_USE_SSL"] = True
 app.config["MAIL_USERNAME"] = "contact@example.com"
 app.config["MAIL_PASSWORD"] = "your-password"
-#app.config["SQLALCHEMY_DATABASE_URI"] = open(dot_env, "r").read().split("\n")[0]
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../db-test.sqlite"
+app.config["SQLALCHEMY_DATABASE_URI"] = open(dot_env, "r").read().split("\n")[0]
+#app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../db-test.sqlite"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["ALLOWED_EXTENSIONS"] = ALLOWED_EXTENSIONS
