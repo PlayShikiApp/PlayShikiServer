@@ -180,6 +180,7 @@ def get_episodes_info(anime_id):
 
 
 from xor import bxor
+key = open("key.priv", "rb").read()
 key2 = open("key2.priv", "rb").read()
 
 video_kinds = {"озвучка": "fandub", "оригинал": "raw", "субтитры": "subtitles"}
@@ -197,15 +198,19 @@ def serialize(obj):
 def encode(s):
 	return base64.b64encode(bxor(s.encode("u8"), key2))
 
-def get_videos_for_episode(anime_id, episode, video_id = None):
+def get_videos_for_episode(anime_id, episode, video_id = None, decode_urls = "encode", sort_by_kinds = True, filter_by_kwargs = {}):
 	anime_videos = AnimeVideo.query.filter_by(anime_id = anime_id, episode = episode).order_by(AnimeVideo.kind).all()
-	res = OrderedDict()
-	for k in video_kinds.values():
-		res[k] = []
+	if sort_by_kinds:
+		res = OrderedDict()
+		for k in video_kinds.values():
+			res[k] = []
+	else:
+		res = []
 
 	if len(anime_videos) < 1:
-		res["active_kind"] = "fansub"
-		res["active_video"] = {"episode": 0}
+		if sort_by_kinds:
+			res["active_kind"] = "fansub"
+			res["active_video"] = {"episode": 0}
 		return res
 
 	#print(video_id)
@@ -218,12 +223,19 @@ def get_videos_for_episode(anime_id, episode, video_id = None):
 		video_id = anime_videos[0].id
 
 	keys = ["url", "video_hosting", "author", "uploader", "language", "id", "anime_id", "active", "episode"]
+	if (not sort_by_kinds):
+		keys.append("kind")
+
 	active_video = None
 
 	video_ids = []
 
 	for n, v in enumerate(anime_videos):
-		v.url = base64.b64encode(v.url).decode("u8") #bxor(v.url, key).decode("u8")
+		if decode_urls == "decode":
+			v.url = bxor(v.url, key)
+		elif decode_urls == "encode":
+			v.url = base64.b64encode(v.url).decode("u8")
+
 		v.video_hosting = urllib.parse.urlparse(v.url).netloc
 		if (video_id is None) and n == 0:
 			v.active = " active"
@@ -238,20 +250,33 @@ def get_videos_for_episode(anime_id, episode, video_id = None):
 		if not v.language:
 			v.language = "unknown"
 
+		skip = False
+		for key, val in filter_by_kwargs.items():
+			if getattr(v, key) != val:
+				skip = True
+				break
+
+		if skip:
+			continue
+
 		video_dict = {key: getattr(v, key) for key in keys}
 		video_ids.append(v.id)
-			
-		res[video_kinds[v.kind]].append(video_dict)
+		
+		if (sort_by_kinds):
+			res[video_kinds[v.kind]].append(video_dict)
+		else:
+			res.append(video_dict)
 
-	res["ids"] = video_ids
+	if (sort_by_kinds):
+		res["ids"] = video_ids
 	
-	#print(res, active_video)
-	if active_video is not None:
-		res["active_kind"] = video_kinds[active_video.kind]
-		res["active_video"] = serialize(active_video)
-	else:
-		res["active_kind"] = "fansub"
-		res["active_video"] = {"episode": 0}
+		#print(res, active_video)
+		if active_video is not None:
+			res["active_kind"] = video_kinds[active_video.kind]
+			res["active_video"] = serialize(active_video)
+		else:
+			res["active_kind"] = "fansub"
+			res["active_video"] = {"episode": 0}
 
 	return res
 
