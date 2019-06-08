@@ -198,6 +198,14 @@ def serialize(obj):
 def encode(s):
 	return base64.b64encode(bxor(s.encode("u8"), key2))
 
+def get_max_episode_for_hosting(anime_id, video_hosting):
+	video_hosting = "%" + video_hosting + "%"
+	max_episode = app.db.session.query(func.max(AnimeVideo.episode)).filter(AnimeVideo.url.ilike(video_hosting)).filter_by(anime_id = anime_id).scalar()
+	if not max_episode:
+		return 0
+
+	return max_episode
+
 def get_videos_for_episode(anime_id, episode, video_id = None, decode_urls = "encode", sort_by_kinds = True, filter_by_kwargs = {}):
 	anime_videos = AnimeVideo.query.filter_by(anime_id = anime_id, episode = episode).order_by(AnimeVideo.kind).all()
 	if sort_by_kinds:
