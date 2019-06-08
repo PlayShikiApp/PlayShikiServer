@@ -182,10 +182,15 @@ def get_episodes_info(anime_id):
 
 
 from xor import bxor
-key = open("key.priv", "rb").read()
+KEY = open("key.priv", "rb").read()
 key2 = open("key2.priv", "rb").read()
 
 video_kinds = {"озвучка": "fandub", "оригинал": "raw", "субтитры": "subtitles"}
+
+def handle_moved(anime_id):
+	if anime_id.startswith("z"):
+		return anime_id[1:]
+	return anime_id
 
 @app.route("/api_videos/<anime_id>", methods=["GET"])
 @app.basic_auth.required
@@ -243,9 +248,9 @@ def get_videos_for_episode(anime_id, episode, video_id = None, decode_urls = "en
 
 	for n, v in enumerate(anime_videos):
 		if decode_urls == "decode":
-			v.url = bxor(v.url, key)
+			v.url = bxor(v.url, KEY)
 		elif decode_urls == "encode":
-			v.url = base64.b64encode(v.url).decode("u8")
+			v.url = base64.b64encode(bxor(v.url.encode("u8"), KEY)).decode("u8")
 
 		v.video_hosting = urllib.parse.urlparse(v.url).netloc
 		if (video_id is None) and n == 0:
@@ -292,20 +297,21 @@ def get_videos_for_episode(anime_id, episode, video_id = None, decode_urls = "en
 	return res
 
 @app.route("/api/<anime_id>/<episode>", defaults={'video_id': None}, methods=["GET"])
+@app.route("/api/animes/<anime_id>/<episode>", defaults={'video_id': None}, methods=["GET"])
 @app.route("/api/<anime_id>/<episode>/<video_id>", methods=["GET"])
 def api_videos(anime_id, episode, video_id):
 	#return demjson.encode(get_videos_for_episode(anime_id, episode, video_id))
-	return encode(json.dumps(get_videos_for_episode(anime_id, episode, video_id)))
+	return encode(json.dumps(get_videos_for_episode(handle_moved(anime_id), episode, video_id)))
 
 @app.route("/<anime_id>", methods=["GET"])
+@app.route("/animes/<anime_id>", methods=["GET"])
 def api_anime_info(anime_id):
-	return encode(json.dumps(get_anime_info(anime_id)))
+	return encode(json.dumps(get_anime_info(handle_moved(anime_id))))
 
 
 @app.route("/faye", methods=["GET", "POST"])
 def faye_stub():
 	return "ok"
-
 
 """@app.route("/<anime_id>/<episode>", methods=["GET"])
 def play_episode(anime_id, episode):
