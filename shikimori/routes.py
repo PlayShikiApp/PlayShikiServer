@@ -162,6 +162,9 @@ def signout():
 	del session["login"]
 	return redirect(url_for("home"))
 
+def get_index(model):
+	return app.db.session.query(func.max(model.id)).scalar()
+
 @lru_cache(maxsize = None)
 def get_anime_info(anime_id):
 	res = OrderedDict()
