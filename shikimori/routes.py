@@ -23,8 +23,6 @@ import urllib
 import json
 import demjson
 
-import pandas as pd
-
 from .models import User, Anime, AnimeVideo, AnimeVideoAuthor
 from .forms import contact_form, upload_form, signup_form, signin_form
 from werkzeug.utils import secure_filename
