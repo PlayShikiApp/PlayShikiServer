@@ -19,6 +19,7 @@ from sqlalchemy import Column, Integer, Numeric, String, DateTime, ForeignKey, T
 from sqlalchemy import func
 
 import urllib
+import urllib.parse
 
 import json
 import demjson
@@ -215,8 +216,20 @@ def get_max_episode_for_hosting(anime_id, video_hosting):
 
 	return max_episode
 
+# sort videos by hostings
+hostings_order = ["www.anilibria.tv", "online.animedia.tv", "sovetromantica.com", "vk.com", "video.sibnet.ru", "ok.ru", "mail.ru", "smotretanime.ru"]
+
+def sort_videos_by_hostings(videos, order):
+	res = []
+	for hosting in order:
+		host_videos = [v for v in videos if urllib.parse.urlparse(v.url).netloc == hosting]
+		res += host_videos
+		videos = [v for v in videos if urllib.parse.urlparse(v.url).netloc != hosting]
+	res += videos
+	return res
+
 def get_videos_for_episode(anime_id, episode, video_id = None, decode_urls = "encode", sort_by_kinds = True, filter_by_kwargs = {}):
-	anime_videos = AnimeVideo.query.filter_by(anime_id = anime_id, episode = episode).order_by(AnimeVideo.kind).all()
+	anime_videos = sort_videos_by_hostings(AnimeVideo.query.filter_by(anime_id = anime_id, episode = episode).order_by(AnimeVideo.kind).all(), hostings_order)
 	if sort_by_kinds:
 		res = OrderedDict()
 		for k in video_kinds.values():
