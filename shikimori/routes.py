@@ -222,7 +222,7 @@ hostings_order = ["www.anilibria.tv", "online.animedia.tv", "sovetromantica.com"
 def sort_videos_by_hostings(videos, order):
 	res = []
 	for hosting in order:
-		host_videos = [v for v in videos if urllib.parse.urlparse(v.url).netloc == hosting]
+		host_videos = sorted([v for v in videos if urllib.parse.urlparse(v.url).netloc == hosting], key = lambda v: v.author)
 		res += host_videos
 		videos = [v for v in videos if urllib.parse.urlparse(v.url).netloc != hosting]
 	res += videos
