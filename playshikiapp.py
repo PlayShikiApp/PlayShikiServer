@@ -7,6 +7,7 @@ df = playshikiapp.find_animes(parsers =
 			("smotretanime", anime365.Anime365Parser),
 			("sovetromantica", sovetromantica.SRParser),
 			("sibnet", sibnet.SibnetParser)
-		      ])
+		      ]),
+		      fetch_all_episodes = False
      )
 playshikiapp.save(df, format = "sql")
