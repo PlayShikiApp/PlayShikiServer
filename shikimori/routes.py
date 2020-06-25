@@ -191,11 +191,14 @@ def get_anime_info(anime_id):
 	if not entry_df.empty:
 		for key in keys:
 			#if not key in res or (key in res and "&&&" in res[key]):
-			if entry_df[key].values[0]:
+			if not key in res and entry_df[key].values[0]:
 				res[key] = entry_df[key].values[0]
 
 	if res["duration"] == None:
 		res["duration"] = 0
+
+	if not "anime_russian" in res:
+		res["anime_russian"] = ""
 
 	return res
 
