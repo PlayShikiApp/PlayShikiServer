@@ -23,6 +23,7 @@ import urllib.parse
 
 import json
 import demjson
+import pandas as pd
 
 from .models import User, Anime, AnimeVideo, AnimeVideoAuthor
 from .forms import contact_form, upload_form, signup_form, signin_form
@@ -34,6 +35,8 @@ mail = Mail()
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = ""
+
+shiki_db_df = pd.read_json(os.path.join(app.config["DATAFRAMES_DIR"], "shiki_db.json"), lines=True)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -169,25 +172,30 @@ def get_index(model):
 def get_anime_info(anime_id):
 	res = OrderedDict()
 	res["duration"] = app.db.session.query(func.max(AnimeVideo.episode)).filter_by(anime_id = anime_id).scalar()
-	anime = AnimeVideo.query.filter_by(anime_id = anime_id).first()
+	entry_df = shiki_db_df.loc[shiki_db_df['anime_id'] == anime_id]
+	entry_db = AnimeVideo.query.filter_by(anime_id = anime_id).first()
 	keys = ["anime_russian", "anime_english"]
 
-	if not anime and anime_id in DATABASE:
-		anime = DATABASE[anime_id]
+	#if not anime1 and anime_id in DATABASE:
+	#	entry = df.loc[df['anime_id'] == anime_id]['anime_english']
+	#	anime = DATABASE[anime_id]
 
-	if not anime:
+	if entry_df.empty and not entry_db:
 		#raise RuntimeError("%s: Error 404" % anime_id)
 		abort(status.HTTP_404_NOT_FOUND)
 
-	if not res["duration"]:
-		keys += ["duration"]
+	if entry_db:
+		for key in keys:
+			res[key] = getattr(entry_db, key)
 
-	if type(anime) == dict:
+	if not entry_df.empty:
 		for key in keys:
-			res[key] = anime[key]
-	else:
-		for key in keys:
-			res[key] = getattr(anime, key)
+			#if not key in res or (key in res and "&&&" in res[key]):
+			if entry_df[key].values[0]:
+				res[key] = entry_df[key].values[0]
+
+	if res["duration"] == None:
+		res["duration"] = 0
 
 	return res
 
