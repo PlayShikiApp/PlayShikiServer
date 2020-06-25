@@ -26,6 +26,7 @@ import demjson
 
 from .models import User, Anime, AnimeVideo, AnimeVideoAuthor
 from .forms import contact_form, upload_form, signup_form, signin_form
+from .misc import DATABASE
 from werkzeug.utils import secure_filename
 
 mail = Mail()
@@ -171,11 +172,22 @@ def get_anime_info(anime_id):
 	anime = AnimeVideo.query.filter_by(anime_id = anime_id).first()
 	keys = ["anime_russian", "anime_english"]
 
+	if not anime and anime_id in DATABASE:
+		anime = DATABASE[anime_id]
+
 	if not anime:
+		#raise RuntimeError("%s: Error 404" % anime_id)
 		abort(status.HTTP_404_NOT_FOUND)
 
-	for key in keys:
-		res[key] = getattr(anime, key)
+	if not res["duration"]:
+		keys += ["duration"]
+
+	if type(anime) == dict:
+		for key in keys:
+			res[key] = anime[key]
+	else:
+		for key in keys:
+			res[key] = getattr(anime, key)
 
 	return res
 
