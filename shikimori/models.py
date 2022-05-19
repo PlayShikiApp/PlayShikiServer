@@ -4,7 +4,7 @@ from datetime import datetime
 from collections import OrderedDict
 
 from shikimori import app
-from wtforms import Field, DecimalField, IntegerField, FloatField, SelectField, StringField, TextField, TextAreaField, SubmitField, validators, ValidationError, PasswordField, DateField
+#from wtforms import Field, DecimalField, IntegerField, FloatField, SelectField, StringField, TextField, TextAreaField, SubmitField, validators, ValidationError, PasswordField, DateField
 
 from flask_babel import lazy_gettext
 from flask_sqlalchemy import SQLAlchemy
@@ -12,8 +12,8 @@ from sqlalchemy import Column, Integer, BigInteger, Numeric, Float, String, Date
 from sqlalchemy.types import Boolean, Date, DateTime, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-from werkzeug import generate_password_hash, check_password_hash
-from wtforms.validators import Required, Length
+#from werkzeug import generate_password_hash, check_password_hash
+#from wtforms.validators import Required, Length
 
 app.db = SQLAlchemy(app)
 
@@ -31,13 +31,15 @@ class User(app.db.Model):
 		self.set_role(role)
 
 	def set_password(self, password):
-		self.pwdhash = generate_password_hash(password)
+		pass
+		#self.pwdhash = generate_password_hash(password)
 
 	def set_role(self, role):
 		self.role = role
 
 	def check_password(self, password):
-		return check_password_hash(self.pwdhash, password)
+		pass
+		#return check_password_hash(self.pwdhash, password)
 
 class Anime(app.db.Model):
 	__tablename__ = "animes"

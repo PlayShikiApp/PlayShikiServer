@@ -25,8 +25,8 @@ def find_dups(anime_ids):
 		for id in list(dups):
 			url = models.AnimeVideo.query.filter(models.AnimeVideo.id == id).first().url
 			#print("%d: %d" % (id, app.db.session.query(func.count(models.AnimeVideo.url)).filter(models.AnimeVideo.url == url).scalar()) )
-			others = [v.id for v in models.AnimeVideo.query.filter(models.AnimeVideo.url == url).all() if not v.id == id]
-			print("%d: %s" % (id, str(others)))
+			others = [(v.id, v.url) for v in models.AnimeVideo.query.filter(models.AnimeVideo.url == url).all() if not v.id == id]
+			print("%d (%s): %s" % (id, url, str(others)))
 
 	if not DRY_RUN:
 		models.AnimeVideo.query.filter(models.AnimeVideo.id.in_(list(dups))).delete(synchronize_session=False)

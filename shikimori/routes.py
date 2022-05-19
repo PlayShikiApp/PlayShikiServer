@@ -26,7 +26,7 @@ import demjson
 import pandas as pd
 
 from .models import User, Anime, AnimeVideo, AnimeVideoAuthor
-from .forms import contact_form, upload_form, signup_form, signin_form
+#from .forms import contact_form, upload_form, signup_form, signin_form
 from .misc import DATABASE
 from werkzeug.utils import secure_filename
 
@@ -49,6 +49,13 @@ class FlaskUser(UserMixin):
 @login_manager.unauthorized_handler
 def unauthorized_callback():
 	return redirect("/")
+
+
+@app.route("/test")
+def test():
+	#session.clear()
+	#return render_template("home.html")
+	return "The site is running normally"
 
 @app.route("/")
 @app.basic_auth.required

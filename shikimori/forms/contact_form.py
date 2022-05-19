@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_babel import lazy_gettext, gettext, ngettext
-from wtforms import Field, TextField, TextAreaField, SubmitField, validators, ValidationError, PasswordField
+#from wtforms import Field, TextField, TextAreaField, SubmitField, validators, ValidationError, PasswordField
 from .. import models
 
 class ContactForm(FlaskForm):
