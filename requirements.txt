@@ -18,7 +18,7 @@ Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
 fuzzysearch==0.7.3
 fuzzywuzzy==0.18.0
-Jinja2==2.10.1
+Jinja2==2.11.3
 mechanize==0.4.8
 pandas==0.24.2
 git+https://github.com/ChronoMonochrome/percache@master#egg=percache
