@@ -1,4 +1,4 @@
-Babel==2.6.0
+Babel==2.9.1
 beautifulsoup4==4.11.1
 demjson==2.2.4
 dateparser==1.1.1
