@@ -2,7 +2,7 @@ Babel==2.6.0
 beautifulsoup4==4.11.1
 demjson==2.2.4
 dateparser==1.1.1
-Flask==1.0.2
+Flask==2.3.2
 Flask-API==1.1
 Flask-Babel==0.12.2
 Flask-BasicAuth==0.2.0
